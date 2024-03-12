@@ -1,7 +1,7 @@
 import { mockDataProps } from "../App";
 import "./List.css";
 import TodoItem from "./TodoItem";
-import { ChangeEvent, useState } from "react";
+import { useState, useMemo } from "react";
 
 export interface ListProps {
   todos: mockDataProps[];
@@ -12,7 +12,7 @@ export interface ListProps {
 function List({ todos, onUpdate, onDelete }: ListProps) {
   const [search, setSearch] = useState("");
 
-  const onChangeSearch = (e: ChangeEvent<HTMLInputElement>) => {
+  const onChangeSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     setSearch(e.target.value);
   };
 
@@ -25,11 +25,30 @@ function List({ todos, onUpdate, onDelete }: ListProps) {
     );
   };
 
+  const { totalCount, doneCount, notDoneCount } = useMemo(() => {
+    console.log("getAnalyzedData 호출!");
+    const totalCount = todos.length;
+    const doneCount = todos.filter((todo) => todo.isDone).length;
+    const notDoneCount = totalCount - doneCount;
+
+    return {
+      totalCount,
+      doneCount,
+      notDoneCount,
+    };
+  }, [todos]);
+  //의존성배열 : deps
+
   const filteredTodos = getFilteredData();
 
   return (
     <div className="List">
       <h4>Todo List ❤️</h4>
+      <div>
+        <div>total: {totalCount}</div>
+        <div>done: {doneCount}</div>
+        <div>notDone: {notDoneCount}</div>
+      </div>
       <input
         placeholder="검색어를 입력하세요."
         value={search}
