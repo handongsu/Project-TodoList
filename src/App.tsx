@@ -5,7 +5,7 @@ import Header from "./components/Header";
 import Editor from "./components/Editor";
 import List from "./components/List";
 
-interface mockDataProps {
+export interface mockDataProps {
   id: number;
   isDone: boolean;
   content: string;
@@ -47,11 +47,23 @@ function App() {
     };
     setTodos([newTodo, ...todos]);
   };
+
+  const onUpdate = (targetId: number) => {
+    setTodos(
+      todos.map((todo) =>
+        todo.id === targetId ? { ...todo, isDone: !todo.isDone } : todo
+      )
+    );
+  };
+
+  const onDelete = (targetId: number) => {
+    setTodos(todos.filter((todo) => todo.id !== targetId));
+  };
   return (
     <div className="App">
       <Header />
       <Editor onCreate={onCreate} />
-      <List />
+      <List todos={todos} onUpdate={onUpdate} onDelete={onDelete} />
     </div>
   );
 }
