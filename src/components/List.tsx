@@ -1,7 +1,8 @@
 import { mockDataProps } from "../App";
 import "./List.css";
 import TodoItem from "./TodoItem";
-import { useState, useMemo } from "react";
+import { useState, useMemo, useContext } from "react";
+import { TodoStateContext } from "../App";
 
 export interface ListProps {
   todos: mockDataProps[];
@@ -9,7 +10,8 @@ export interface ListProps {
   onDelete: (targetId: number) => void;
 }
 
-function List({ todos, onUpdate, onDelete }: ListProps) {
+function List() {
+  const todos = useContext(TodoStateContext) || [];
   const [search, setSearch] = useState("");
 
   const onChangeSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -56,14 +58,7 @@ function List({ todos, onUpdate, onDelete }: ListProps) {
       />
       <div className="todos_wrapper">
         {filteredTodos.map((todo) => {
-          return (
-            <TodoItem
-              key={todo.id}
-              {...todo}
-              onUpdate={onUpdate}
-              onDelete={onDelete}
-            />
-          );
+          return <TodoItem key={todo.id} {...todo} />;
         })}
       </div>
     </div>

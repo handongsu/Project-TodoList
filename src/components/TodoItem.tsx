@@ -1,25 +1,24 @@
 import { mockDataProps } from "../App";
 import "./TodoItem.css";
-import { memo } from "react";
+import { memo, useContext } from "react";
+import { TodoDispatchContext } from "../App";
 
-interface TodoItemProps extends mockDataProps {
-  onUpdate: (id: number) => void;
-  onDelete: (id: number) => void;
-}
+// interface TodoItemProps extends mockDataProps {
+//   onUpdate: (id: number) => void;
+//   onDelete: (id: number) => void;
+// }
 
-function TodoItem({
-  id,
-  isDone,
-  content,
-  date,
-  onUpdate,
-  onDelete,
-}: TodoItemProps) {
+function TodoItem({ id, isDone, content, date }: mockDataProps) {
+  const { onUpdate, onDelete } = useContext(TodoDispatchContext) || {};
   const onChangeCheckbox = () => {
-    onUpdate(id);
+    if (onUpdate) {
+      onUpdate(id);
+    }
   };
   const onClickDeleteButton = () => {
-    onDelete(id);
+    if (onDelete) {
+      onDelete(id);
+    }
   };
   return (
     <div className="TodoItem">

@@ -1,6 +1,13 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import "./App.css";
-import { useState, useRef, useReducer, useCallback } from "react";
+import {
+  useState,
+  useRef,
+  useReducer,
+  useCallback,
+  createContext,
+  useMemo,
+} from "react";
 import Header from "./components/Header";
 import Editor from "./components/Editor";
 import List from "./components/List";
@@ -17,6 +24,11 @@ type Action =
   | { type: "UPDATE"; targetId: number }
   | { type: "DELETE"; targetId: number };
 
+interface TodoDispatchProps {
+  onUpdate: (id: number) => void;
+  onDelete: (id: number) => void;
+  onCreate: (content: string) => void;
+}
 const mockData: mockDataProps[] = [
   {
     id: 0,
@@ -53,6 +65,14 @@ function reducer(state: mockDataProps[], action: Action): mockDataProps[] {
   }
 }
 
+export const TodoStateContext = createContext<mockDataProps[] | undefined>(
+  undefined
+);
+
+export const TodoDispatchContext = createContext<TodoDispatchProps | undefined>(
+  undefined
+);
+
 function App() {
   // const [todos, setTodos] = useState<mockDataProps[]>(mockData);
   const [todos, dispatch] = useReducer(reducer, mockData);
@@ -84,11 +104,19 @@ function App() {
     });
   }, []);
 
+  const memoizedDispatch = useMemo(() => {
+    return { onCreate, onUpdate, onDelete };
+  }, []);
+
   return (
     <div className="App">
       <Header />
-      <Editor onCreate={onCreate} />
-      <List todos={todos} onUpdate={onUpdate} onDelete={onDelete} />
+      <TodoStateContext.Provider value={todos}>
+        <TodoDispatchContext.Provider value={memoizedDispatch}>
+          <Editor />
+          <List />
+        </TodoDispatchContext.Provider>
+      </TodoStateContext.Provider>
     </div>
   );
 }

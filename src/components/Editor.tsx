@@ -1,19 +1,18 @@
-import { ChangeEvent, KeyboardEvent, useState, useRef } from "react";
+import { useState, useRef, useContext } from "react";
 import "./Editor.css";
+import { TodoDispatchContext } from "../App";
 
-interface EditorProps {
-  onCreate: (content: string) => void;
-}
+function Editor() {
+  const { onCreate } = useContext(TodoDispatchContext) || {};
 
-function Editor({ onCreate }: EditorProps) {
   const [content, setContent] = useState<string>("");
   const contentRef = useRef<HTMLInputElement>(null);
 
-  const onChangeContent = (e: ChangeEvent<HTMLInputElement>) => {
+  const onChangeContent = (e: React.ChangeEvent<HTMLInputElement>) => {
     setContent(e.target.value);
   };
 
-  const onKeydown = (e: KeyboardEvent<HTMLInputElement>) => {
+  const onKeydown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       onSubmit();
     }
@@ -25,7 +24,9 @@ function Editor({ onCreate }: EditorProps) {
       }
       return;
     }
-    onCreate(content);
+    if (onCreate) {
+      onCreate(content);
+    }
     setContent("");
   };
   return (
